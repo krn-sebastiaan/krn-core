@@ -1,0 +1,52 @@
+name: Download and install SW Core, MUnit and KRN Core
+description: Download and install SW Core, MUnit and KRN Core
+author: krn-sebastiaan
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  gpg-passphrase:
+    required: true
+  sw-core-version:
+    required: true
+    default: 5.3.3
+  munit-version:
+    required: true
+    default: 5.3.1+20240209-1641
+  krn-core-version:
+    required: true
+    default: 0.4.0+20240126-1532
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download and install SW Core
+      shell: bash
+      env:
+        GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
+        SW_CORE_VERSION: ${{ inputs.sw-core-version }}
+      run: |
+        curl -sO https://www.keronic.com/packages/smallworld/${SW_CORE_VERSION}/core_installer.jar.gpg
+        gpg --quiet --batch --yes --decrypt --passphrase="$GPG_PASSPHRASE" --output core_installer.jar core_installer.jar.gpg
+        sudo java -Daccept_licences="YES" -Djava.awt.headless=true -jar core_installer.jar /opt/smallworld root root > install_log.txt
+        rm core_installer.jar*
+    - name: Download and install MUnit
+      shell: bash
+      env:
+        MUNIT_VERSION: ${{ inputs.munit-version }}
+      run: |
+        curl -sO https://keronic.com/packages/munit-${MUNIT_VERSION}.jar
+        java -jar munit-${MUNIT_VERSION}.jar /opt/smallworld > install_log.txt
+        rm munit-*.jar
+    - name: Download and install KRN Core
+      shell: bash
+      env:
+        GPG_PASSPHRASE: ${{ inputs.gpg-passphrase }}
+        SW_CORE_VERSION: ${{ inputs.sw-core-version }}
+        KRN_CORE_VERSION: ${{ inputs.krn-core-version }}
+      run: |
+        curl -sO https://www.keronic.com/packages/smallworld/${SW_CORE_VERSION}/krn_core-${KRN_CORE_VERSION}.jar.gpg
+        gpg --quiet --batch --yes --decrypt --passphrase="$GPG_PASSPHRASE" --output krn_core-${KRN_CORE_VERSION}.jar krn_core-${KRN_CORE_VERSION}.jar.gpg
+        java -jar krn_core-${KRN_CORE_VERSION}.jar /opt/smallworld > install_log.txt
+        rm krn_core-*.jar*
