@@ -16,7 +16,7 @@ inputs:
     default: 5.3.1+20240209-1641
   krn-core-version:
     required: true
-    default: 0.4.0+20240126-1532
+    default: 0.4.0+20240221-0755
 
 runs:
   using: "composite"
