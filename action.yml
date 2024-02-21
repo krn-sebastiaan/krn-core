@@ -9,14 +9,17 @@ inputs:
   gpg-passphrase:
     required: true
   sw-core-version:
-    required: true
+    required: false
     default: 5.3.3
   munit-version:
-    required: true
+    required: false
     default: 5.3.1+20240209-1641
   krn-core-version:
-    required: true
+    required: false
     default: 0.4.0+20240221-0755
+  krn-core-repository-url:
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -28,7 +31,7 @@ runs:
         SW_CORE_VERSION: ${{ inputs.sw-core-version }}
       run: |
         curl -sO https://www.keronic.com/packages/smallworld/${SW_CORE_VERSION}/core_installer.jar.gpg
-        gpg --quiet --batch --yes --decrypt --passphrase="$GPG_PASSPHRASE" --output core_installer.jar core_installer.jar.gpg
+        gpg -q --batch --yes -d --passphrase="$GPG_PASSPHRASE" -o core_installer.jar core_installer.jar.gpg
         sudo java -Daccept_licences="YES" -Djava.awt.headless=true -jar core_installer.jar /opt/smallworld root root > install_log.txt
         rm core_installer.jar*
     - name: Download and install MUnit
@@ -47,6 +50,12 @@ runs:
         KRN_CORE_VERSION: ${{ inputs.krn-core-version }}
       run: |
         curl -sO https://www.keronic.com/packages/smallworld/${SW_CORE_VERSION}/krn_core-${KRN_CORE_VERSION}.jar.gpg
-        gpg --quiet --batch --yes --decrypt --passphrase="$GPG_PASSPHRASE" --output krn_core-${KRN_CORE_VERSION}.jar krn_core-${KRN_CORE_VERSION}.jar.gpg
+        gpg -q --batch --yes -d --passphrase="$GPG_PASSPHRASE" -o krn_core-${KRN_CORE_VERSION}.jar krn_core-${KRN_CORE_VERSION}.jar.gpg
         java -jar krn_core-${KRN_CORE_VERSION}.jar /opt/smallworld > install_log.txt
         rm krn_core-*.jar*
+    - name: Download KRN Core Repository file
+      if: ${{ inputs.krn-core-repository-url != '' }}
+      shell: bash
+      run: |
+        curl -sL ${{ inputs.krn-core-repository-url }} -o /tmp/repositories.xml
+        echo KRN_REPOSITORY_FILE=/tmp/repositories.xml >> $GITHUB_ENV

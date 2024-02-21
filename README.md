@@ -24,12 +24,13 @@ jobs:
 
 ## :fountain_pen: Inputs
 
-| Input              | Default               | Description                     |
-| ------------------ | --------------------- | ------------------------------- |
-| `gpg-passphrase`   |                       | The GPG passphrase to decrypt sw_core and krn_core installer |
-| `sw-core-version`  | `5.3.3`               | The SW Core version to install |
-| `munit-version`    | `5.3.1+20240209-1641` | The MUnit version to install |
-| `krn-core-version` | `0.4.0+20240126-1532` | The KRN Core version to install |
+| Input                      | Default               | Required           | Description |
+| -------------------------- | --------------------- | ------------------ | ----------- |
+| `gpg-passphrase`           |                       | :heavy_check_mark: | The GPG passphrase to decrypt sw_core and krn_core installer |
+| `sw-core-version`          | `5.3.3`               | :heavy_check_mark: | The SW Core version to install |
+| `munit-version`            | `5.3.1+20240209-1641` | :heavy_check_mark: | The MUnit version to install |
+| `krn-core-version`         | `0.4.0+20240221-0755` | :heavy_check_mark: | The KRN Core version to install |
+| `krn-core-repository-file` | `''`                  | :negative_squared_cross_mark: | The file that contains references to the repositories we want to use to install other Mojos |
 
 ## :building_construction: Compile Smallworld product
 
