@@ -34,12 +34,12 @@ jobs:
 
 ## :building_construction: Compile Smallworld product
 
-To compile a Smallworld product, you can use the next example `.github.yml` and example `build.xml` (which is used by `ant`):
+To compile a Smallworld product, you can use the next example `.github.yml` and example `build.xml` (which is used by `ant`). This example refers to [another GitHub Action](https://github.com/krn-sebastiaan/actions/blob/main/README.md#compile):
 
 ### :rocket: `.github.yml`
 
 ```yaml
-name: compile
+name: Compile mMojo
 
 on:
   push:
@@ -49,35 +49,14 @@ on:
     branches:
       - "**"
 
-env:
-  KRN_CORE_VERSION: 0.4.0+20240126-1532
-  PRODUCT_NAME: ${{ github.event.repository.name }}
-
 jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-tags: 'true'
-          fetch-depth: 0
-      - name: Install SW Core, MUnit and KRN Core
-        uses: krn-sebastiaan/krn-core@main
+      - name: Compile mMojo
+        uses: krn-sebastiaan/actions/compile@main
         with:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          krn-core-version: ${{ env.KRN_CORE_VERSION }}
-      - name: Create Mojo
-        env:
-          KRN_CORE_LOCATION: /opt/smallworld/krn_core-${{ env.KRN_CORE_VERSION }}
-          SMALLWORLD_GIS: /opt/smallworld/core
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-        run: ant make_mojo
-      - name: Upload Mojo
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.PRODUCT_NAME }}
-          path: ${{ env.PRODUCT_NAME}}*.jar
-          if-no-files-found: error
 ```
 
 ### :ant: `build.xml`
